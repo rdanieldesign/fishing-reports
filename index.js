@@ -1,12 +1,8 @@
 const mySQLService = require('./mysql-service');
 const prompts = require('prompts');
 const locationService = require('./location-service');
-
-const onCancel = () => {
-    console.log('on cancel');
-    mySQLService.endConnection();
-    return false;
-}
+const reportService = require('./report-service');
+const promptService = require('./prompt-service');
 
 const exitHandler = () => {
     console.log('exit process');
@@ -15,28 +11,20 @@ const exitHandler = () => {
 }
 
 async function login() {
-    const onSubmit = (prompt, password) => {
+    promptService.getPassword((prompt, password) => {
         mySQLService.login(password)
         getAction();
-    };
-    prompts({
-        type: 'password',
-        name: 'password',
-        message: 'Enter your mySQL password'
-    }, { onCancel, onSubmit });
+    })
 }
 
 async function getAction() {
     const onSubmit = async (prompt, answer) => {
-        console.log(answer);
         switch(answer) {
             case 1:
-                console.log(`Logging results...`)
-                const results = await viewAllReports();
+                const results = await reportService.viewAllReports();
                 console.log(results);
                 break;
             case 2:
-                console.log(`Adding location`);
                 const locResults = await addLocation();
                 console.log(locResults);
                 break;
@@ -45,42 +33,11 @@ async function getAction() {
         }
         getAction();
     };
-    return prompts({
-        type: 'select',
-        name: 'action',
-        message: 'What do you want to do?',
-        choices: [
-            { title: 'View all catches', value: 1 },
-            { title: 'Add new location', value: 2 },
-        ],
-    }, { onCancel, onSubmit });
-}
-
-function viewAllReports() {
-    return new Promise((resolve, reject) => {
-        mySQLService.mySQLConnection.query('SELECT * FROM reports WHERE catchCount > 0', function (error, results, fields) {
-            if (error) {
-                reject(error);
-            };
-            resolve(results);
-        });
-    });
+    return promptService.getAction(onSubmit);
 }
 
 async function addLocation() {
-    const questions = [
-        {
-            type: 'text',
-            name: 'name',
-            message: 'What do you want to call this location?'
-        },
-        {
-            type: 'text',
-            name: 'googleLink',
-            message: 'Provide a link to a google maps pin.'
-        },
-    ];
-    const locationAnswers = await prompts(questions, { onCancel });
+    const locationAnswers = await promptService.getLocation();
     return locationService.addLocation(locationAnswers.name, locationAnswers.googleLink)
 }
 

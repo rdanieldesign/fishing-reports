@@ -1,4 +1,3 @@
-const prompts = require('prompts');
 const mySQLService = require('./mysql-service');
 
 class LocationService {
