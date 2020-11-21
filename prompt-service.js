@@ -1,30 +1,33 @@
 const mySQLService = require('./mysql-service');
 const prompts = require('prompts');
+const { ACTIONS } = require('./constants');
 
 class PromptService {
 
     getPassword(onSubmit) {
-        return prompts({
+        return this.sendPrompt({
             type: 'password',
             name: 'password',
             message: 'Enter your mySQL password'
-        }, { onCancel: this.onCancel, onSubmit });
+        }, onSubmit );
     }
 
     getAction(onSubmit) {
-        return prompts({
+        return this.sendPrompt({
             type: 'select',
             name: 'action',
             message: 'What do you want to do?',
             choices: [
-                { title: 'View all catches', value: 1 },
-                { title: 'Add new location', value: 2 },
+                { title: 'View all catches', value: ACTIONS.VIEW_CATCHES },
+                { title: 'Add new location', value: ACTIONS.ADD_LOCATION },
+                { title: 'Remove location', value: ACTIONS.REMOVE_LOCATION },
+                { title: 'Add new report', value: ACTIONS.ADD_REPORT },
             ],
-        }, { onCancel: this.onCancel, onSubmit });
+        }, onSubmit);
     }
 
-    getLocation() {
-        const questions = [
+    createLocation() {
+        return this.sendPrompt([
             {
                 type: 'text',
                 name: 'name',
@@ -35,8 +38,42 @@ class PromptService {
                 name: 'googleLink',
                 message: 'Provide a link to a google maps pin.'
             },
-        ];
-        return prompts(questions, { onCancel: this.onCancel });
+        ]);
+    }
+
+    removeLocation(locationOptions) {
+        return this.sendPrompt({
+                type: 'select',
+                name: 'locationId',
+                message: 'Which location do you want to remove?',
+                choices: locationOptions,
+            });
+    }
+
+    createReport(locationOptions) {
+        return this.sendPrompt([
+            {
+                type: 'select',
+                name: 'locationId',
+                message: 'Where did you go?',
+                choices: locationOptions,
+            },
+            {
+                type: 'date',
+                name: 'date',
+                message: 'When did you go?',
+                initial: new Date(),
+            },
+            {
+                type: 'number',
+                name: 'catchCount',
+                message: 'How many fish did you catch?'
+            },
+        ]);
+    }
+
+    sendPrompt(questions, onSubmit) {
+        return prompts(questions, { onCancel: this.onCancel, onSubmit });
     }
 
     onCancel() {

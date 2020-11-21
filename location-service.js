@@ -3,13 +3,29 @@ const mySQLService = require('./mysql-service');
 class LocationService {
     
     addLocation(name, googleLink) {
-        return new Promise((resolve, reject) => {
-            const query = `INSERT INTO locations(name, googleMapsLink) VALUES
+        return this.queryToPromise(
+            `INSERT INTO locations(name, googleMapsLink) VALUES
                 (
                     "${name}",
                     "${googleLink}"
                 );`
-            mySQLService.mySQLConnection.query(query, function (error, results, fields) {
+        );
+    }
+
+    removeLocation(locationId) {
+        return this.queryToPromise(
+            `DELETE FROM locations
+                WHERE ID = ${locationId};`
+        );
+    }
+
+    getLocations() {
+        return this.queryToPromise(`SELECT * FROM locations`);
+    }
+
+    queryToPromise(query) {
+        return new Promise((resolve, reject) => {
+            mySQLService.mySQLConnection.query(query, function (error, results) {
                 if (error) {
                     reject(error);
                 };
