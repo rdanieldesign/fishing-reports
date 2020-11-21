@@ -1,6 +1,6 @@
-const { locationPrompts } = require('./location-prompts');
+const { locationPrompts } = require('./location-prompt');
 const locationSQL = require('./location-sql');
-const { locationsToPromptOptions } = require('./location-utils');
+const { locationsToPromptOptions } = require('./location-util');
 
 async function addLocation() {
     const locationAnswers = await locationPrompts.createLocation();

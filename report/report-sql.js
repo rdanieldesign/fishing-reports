@@ -1,7 +1,7 @@
-const mySQLService = require('./mysql-service');
-const { jsDateToString } = require('./utils');
+const mySQLService = require('../mysql-service');
+const { jsDateToString } = require('../utils');
 
-class ReportService {
+class ReportSQL {
 
     viewAllReports() {
         return this.queryToPromise('SELECT * FROM reports');
@@ -30,4 +30,4 @@ class ReportService {
     }
 }
 
-module.exports = new ReportService();
+module.exports = new ReportSQL();
