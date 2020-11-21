@@ -1,6 +1,6 @@
-const mySQLService = require('./mysql-service');
+const mySQLService = require('../mysql-service');
 
-class LocationService {
+class LocationSQL {
     
     addLocation(name, googleLink) {
         return this.queryToPromise(
@@ -35,4 +35,4 @@ class LocationService {
     }
 }
 
-module.exports = new LocationService();
+module.exports = new LocationSQL();
