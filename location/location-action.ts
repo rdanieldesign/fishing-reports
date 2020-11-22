@@ -1,23 +1,22 @@
-const { locationPrompts } = require('./location-prompt');
-const locationSQL = require('./location-sql');
-const { locationsToPromptOptions } = require('./location-util');
+import { Choice } from "prompts";
+import { LocationPrompts } from './location-prompt';
+import { LocationSQL } from './location-sql';
+const locationPrompts = new LocationPrompts();
+const locationSQL = new LocationSQL();
+import  { locationsToPromptOptions } from './location-util';
 
-async function addLocation() {
+export async function addLocation() {
     const locationAnswers = await locationPrompts.createLocation();
     return locationSQL.addLocation(locationAnswers.name, locationAnswers.googleLink)
 }
 
-async function removeLocation() {
+export async function removeLocation() {
     const locations = await locationSQL.getLocations();
     const { locationId } = await locationPrompts.removeLocation(locationsToPromptOptions(locations));
     return locationSQL.removeLocation(locationId)
 }
 
-async function getLocationOptions() {
+export async function getLocationOptions(): Promise<Choice[]> {
     const locations = await locationSQL.getLocations();
     return locationsToPromptOptions(locations)
 }
-
-module.exports = {
-    addLocation, removeLocation, getLocationOptions
-};

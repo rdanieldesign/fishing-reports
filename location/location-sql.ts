@@ -1,9 +1,11 @@
-const mySQLService = require('../mysql-service');
+import { MySQLService } from '../mysql-service';
+import { ILocation } from './location-interface';
+const mySQLService = new MySQLService();
 
-class LocationSQL {
+export class LocationSQL {
     
-    addLocation(name, googleLink) {
-        return this.queryToPromise(
+    addLocation(name: string, googleLink: string): Promise<ILocation> {
+        return this.queryToPromise<ILocation>(
             `INSERT INTO locations(name, googleMapsLink) VALUES
                 (
                     "${name}",
@@ -12,18 +14,18 @@ class LocationSQL {
         );
     }
 
-    removeLocation(locationId) {
-        return this.queryToPromise(
+    removeLocation(locationId: string): Promise<void> {
+        return this.queryToPromise<void>(
             `DELETE FROM locations
                 WHERE ID = ${locationId};`
         );
     }
 
-    getLocations() {
-        return this.queryToPromise(`SELECT * FROM locations`);
+    getLocations(): Promise<ILocation[]> {
+        return this.queryToPromise<ILocation[]>(`SELECT * FROM locations`);
     }
 
-    queryToPromise(query) {
+    queryToPromise<T>(query: string): Promise<T> {
         return new Promise((resolve, reject) => {
             mySQLService.mySQLConnection.query(query, function (error, results) {
                 if (error) {
@@ -34,5 +36,3 @@ class LocationSQL {
         });
     }
 }
-
-module.exports = new LocationSQL();

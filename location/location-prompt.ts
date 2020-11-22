@@ -1,6 +1,7 @@
-const { PromptService } = require('../prompt-service');
+import { Choice } from 'prompts';
+import { PromptService } from '../prompt-service';
 
-class LocationPrompts extends PromptService {
+export class LocationPrompts extends PromptService {
     createLocation() {
         return this.sendPrompt([
             {
@@ -16,7 +17,7 @@ class LocationPrompts extends PromptService {
         ]);
     }
     
-    removeLocation(locationOptions) {
+    removeLocation(locationOptions: Choice[]) {
         return this.sendPrompt({
                 type: 'select',
                 name: 'locationId',
@@ -25,6 +26,3 @@ class LocationPrompts extends PromptService {
             });
     }
 }
-
-
-module.exports = { locationPrompts: new LocationPrompts(), LocationPrompts };

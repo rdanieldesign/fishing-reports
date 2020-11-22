@@ -1,8 +1,11 @@
-const mySQLService = require('./mysql-service');
-const { addLocation, removeLocation } = require('./location/location-action');
-const { addReport, viewAllReports } = require('./report/report-action');
-const { promptService } = require('./prompt-service');
-const { ACTIONS } = require('./constants');
+import { MySQLService } from './mysql-service';
+const mySQLService = new MySQLService();
+import { addLocation, removeLocation } from './location/location-action';
+import { addReport, viewAllReports } from './report/report-action';
+import { PromptService } from './prompt-service';
+const promptService = new PromptService();
+import { ACTIONS } from './constants';
+import { PromptObject } from 'prompts';
 
 const exitHandler = () => {
     console.log('exit process');
@@ -18,7 +21,7 @@ async function login() {
 };
 
 async function getAction() {
-    const onSubmit = async (prompt, answer) => {
+    const onSubmit = async (prompt: PromptObject, answer: any) => {
         switch(answer) {
             case ACTIONS.VIEW_CATCHES: {
                 const results = await viewAllReports();

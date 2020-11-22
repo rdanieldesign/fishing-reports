@@ -1,8 +1,9 @@
-const { PromptService } = require("../prompt-service");
+import { Choice } from 'prompts';
+import { PromptService } from '../prompt-service';
 
-class ReportPrompt extends PromptService {
+export class ReportPrompt extends PromptService {
 
-    createReport(locationOptions) {
+    createReport(locationOptions: Choice[]) {
         return this.sendPrompt([
             {
                 type: 'select',
@@ -24,5 +25,3 @@ class ReportPrompt extends PromptService {
         ]);
     }
 }
-
-module.exports = new ReportPrompt();

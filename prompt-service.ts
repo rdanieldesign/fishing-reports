@@ -1,10 +1,12 @@
-const mySQLService = require('./mysql-service');
-const prompts = require('prompts');
-const { ACTIONS } = require('./constants');
+import { MySQLService } from './mysql-service';
+const mySQLService = new MySQLService();
+import * as prompts from 'prompts';
+import { PromptObject } from 'prompts';
+import { ACTIONS } from './constants';
 
-class PromptService {
+export class PromptService {
 
-    getPassword(onSubmit) {
+    getPassword(onSubmit: (prompt: PromptObject, answer: any, answers: any[]) => void) {
         return this.sendPrompt({
             type: 'password',
             name: 'password',
@@ -12,7 +14,7 @@ class PromptService {
         }, onSubmit );
     }
 
-    getAction(onSubmit) {
+    getAction(onSubmit: (prompt: PromptObject, answer: any, answers: any[]) => void) {
         return this.sendPrompt({
             type: 'select',
             name: 'action',
@@ -26,15 +28,13 @@ class PromptService {
         }, onSubmit);
     }
 
-    sendPrompt(questions, onSubmit) {
+    sendPrompt(questions: PromptObject<string> | Array<PromptObject<string>>, onSubmit?: (prompt: PromptObject, answer: any, answers: any[]) => void) {
         return prompts(questions, { onCancel: this.onCancel, onSubmit });
     }
 
-    onCancel() {
+    onCancel(): boolean {
         console.log('on cancel');
         mySQLService.endConnection();
         return false;
     }
 }
-
-module.exports = { promptService: new PromptService(), PromptService };

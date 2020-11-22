@@ -1,9 +1,9 @@
-const mysql = require('mysql');
+import { Connection, createConnection } from 'mysql';
 
-class MySQLService {
+export class MySQLService {
 
-    mySQLConnection;
-    _instance;
+    mySQLConnection!: Connection;
+    private static _instance: MySQLService;
 
     constructor() {
         if (!MySQLService._instance) {
@@ -12,8 +12,8 @@ class MySQLService {
         return MySQLService._instance;
     }
 
-    login(password) {
-        this.mySQLConnection = mysql.createConnection({
+    login(password: string) {
+        this.mySQLConnection = createConnection({
             host: 'localhost',
             user: 'root',
             password,
@@ -28,5 +28,3 @@ class MySQLService {
         }
     }
 }
-
-module.exports = new MySQLService();
