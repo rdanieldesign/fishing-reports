@@ -1,7 +1,21 @@
 import { Choice } from 'prompts';
 import { PromptService } from '../prompt-service';
+import { LocationActions } from './location-enum';
 
 export class LocationPrompts extends PromptService {
+
+    getActions() {
+        return this.sendPrompt({
+            type: 'select',
+            name: 'action',
+            message: '(Locations) => What do you want to do?',
+            choices: [
+                { title: 'Add new location', value: LocationActions.AddLocation },
+                { title: 'Remove location', value: LocationActions.RemoveLocation },
+            ],
+        });
+    }
+
     createLocation() {
         return this.sendPrompt([
             {

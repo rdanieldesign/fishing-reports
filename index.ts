@@ -1,13 +1,14 @@
-import { addLocation, removeLocation } from './location/location-action';
-import { addReport, viewAllReports } from './report/report-action';
+import { LocationAction } from './location/location-action';
+import { ReportAction } from './report/report-action';
 import { login } from './auth/auth-action';
-import { PromptService } from './prompt-service';
-import { ACTIONS } from './constants';
-import { PromptObject } from 'prompts';
 import { MySQLService } from './mysql-service';
-const mySQLService = new MySQLService();
+import { MenuAction } from './menu/menu-action';
+import { MenuItems } from './menu/menu-enum';
 
-const promptService = new PromptService();
+const mySQLService = new MySQLService();
+const menuAction = new MenuAction();
+const locationAction = new LocationAction();
+const reportAction = new ReportAction();
 
 const exitHandler = () => {
     console.log('exit process');
@@ -15,40 +16,28 @@ const exitHandler = () => {
     process.exit();
 };
 
-async function getAction() {
-    const onSubmit = async (prompt: PromptObject, answer: any) => {
-        switch(answer) {
-            case ACTIONS.VIEW_CATCHES: {
-                const results = await viewAllReports();
-                console.log(results);
-                break;
+async function getMenu() {
+    return menuAction.getMenuSelection()
+        .then(async ({ selection }) => {
+            switch (selection) {
+                case MenuItems.locations: {
+                    await locationAction.getActions();
+                    break;
+                }
+                case MenuItems.reports: {
+                    await reportAction.getActions();
+                    break;
+                }
+                default:
+                    break;
             }
-            case ACTIONS.ADD_LOCATION: {
-                const locResults = await addLocation();
-                console.log(locResults);
-                break;
-            }
-            case ACTIONS.REMOVE_LOCATION: {
-                const locResults = await removeLocation();
-                console.log(locResults);
-                break;
-            }
-            case ACTIONS.ADD_REPORT: {
-                const report = await addReport();
-                console.log(report);
-                break;
-            }
-            default:
-                break;
-        }
-        getAction();
-    };
-    return promptService.getAction(onSubmit);
+            getMenu();
+        });
 }
 
 // Start process
 login().then(() => {
-    getAction();
+    getMenu();
 });
 
 //catches ctrl+c event
