@@ -1,8 +1,7 @@
 import { MySQLService } from '../mysql-service';
 import { ILocation } from './location-interface';
-const mySQLService = new MySQLService();
 
-export class LocationSQL {
+export class LocationSQL extends MySQLService {
     
     addLocation(name: string, googleLink: string): Promise<ILocation> {
         return this.queryToPromise<ILocation>(
@@ -23,16 +22,5 @@ export class LocationSQL {
 
     getLocations(): Promise<ILocation[]> {
         return this.queryToPromise<ILocation[]>(`SELECT * FROM locations`);
-    }
-
-    queryToPromise<T>(query: string): Promise<T> {
-        return new Promise((resolve, reject) => {
-            mySQLService.mySQLConnection.query(query, function (error, results) {
-                if (error) {
-                    reject(error);
-                };
-                resolve(results);
-            });
-        });
     }
 }

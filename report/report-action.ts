@@ -13,5 +13,7 @@ export async function addReport() {
 }
 
 export function viewAllReports() {
+    console.log(reportSQL);
+    console.log(reportSQL.viewAllReports);
     return reportSQL.viewAllReports();
 }

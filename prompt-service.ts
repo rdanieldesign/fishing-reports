@@ -1,18 +1,10 @@
-import { MySQLService } from './mysql-service';
-const mySQLService = new MySQLService();
 import * as prompts from 'prompts';
 import { PromptObject } from 'prompts';
 import { ACTIONS } from './constants';
+import { MySQLService } from './mysql-service';
+const mySQLService = new MySQLService();
 
 export class PromptService {
-
-    getPassword(onSubmit: (prompt: PromptObject, answer: any, answers: any[]) => void) {
-        return this.sendPrompt({
-            type: 'password',
-            name: 'password',
-            message: 'Enter your mySQL password'
-        }, onSubmit );
-    }
 
     getAction(onSubmit: (prompt: PromptObject, answer: any, answers: any[]) => void) {
         return this.sendPrompt({
@@ -32,7 +24,7 @@ export class PromptService {
         return prompts(questions, { onCancel: this.onCancel, onSubmit });
     }
 
-    onCancel(): boolean {
+    private onCancel(): boolean {
         console.log('on cancel');
         mySQLService.endConnection();
         return false;

@@ -1,23 +1,18 @@
-import { MySQLService } from './mysql-service';
-const mySQLService = new MySQLService();
 import { addLocation, removeLocation } from './location/location-action';
 import { addReport, viewAllReports } from './report/report-action';
+import { login } from './auth/auth-action';
 import { PromptService } from './prompt-service';
-const promptService = new PromptService();
 import { ACTIONS } from './constants';
 import { PromptObject } from 'prompts';
+import { MySQLService } from './mysql-service';
+const mySQLService = new MySQLService();
+
+const promptService = new PromptService();
 
 const exitHandler = () => {
     console.log('exit process');
     mySQLService.endConnection();
     process.exit();
-};
-
-async function login() {
-    promptService.getPassword((prompt, password) => {
-        mySQLService.login(password)
-        getAction();
-    })
 };
 
 async function getAction() {
@@ -52,7 +47,9 @@ async function getAction() {
 }
 
 // Start process
-login();
+login().then(() => {
+    getAction();
+});
 
 //catches ctrl+c event
 process.on('SIGINT', exitHandler);

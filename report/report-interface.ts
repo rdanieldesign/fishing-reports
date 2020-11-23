@@ -3,3 +3,7 @@ export interface INewReport {
   catchCount: number;
   date: Date;
 }
+
+export interface IReport extends INewReport {
+  id: number;
+}
