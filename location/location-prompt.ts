@@ -1,6 +1,7 @@
 import { Choice } from 'prompts';
 import { PromptService } from '../prompt-service';
 import { LocationActions } from './location-enum';
+import { ILocation } from './location-interface';
 
 export class LocationPrompts extends PromptService {
 
@@ -11,22 +12,26 @@ export class LocationPrompts extends PromptService {
             message: '(Locations) => What do you want to do?',
             choices: [
                 { title: 'Add new location', value: LocationActions.AddLocation },
+                { title: 'Edit location', value: LocationActions.EditLocation },
                 { title: 'Remove location', value: LocationActions.RemoveLocation },
+                { title: '< Back', value: null },
             ],
         });
     }
 
-    createLocation() {
+    createLocation(location?: ILocation) {
         return this.sendPrompt([
             {
                 type: 'text',
                 name: 'name',
-                message: 'What do you want to call this location?'
+                message: 'What do you want to call this location?',
+                initial: location?.name,
             },
             {
                 type: 'text',
-                name: 'googleLink',
-                message: 'Provide a link to a google maps pin.'
+                name: 'googleMapsLink',
+                message: 'Provide a link to a google maps pin.',
+                initial: location?.googleMapsLink,
             },
         ]);
     }
@@ -38,5 +43,14 @@ export class LocationPrompts extends PromptService {
                 message: 'Which location do you want to remove?',
                 choices: locationOptions,
             });
+    }
+
+    selectLocation(locationOptions: Choice[]) {
+        return this.sendPrompt({
+            type: 'select',
+            name: 'locationId',
+            message: 'Select a location',
+            choices: locationOptions,
+        });
     }
 }

@@ -1,16 +1,16 @@
 import { MySQLService } from '../mysql-service';
-import { ILocation } from './location-interface';
+import { ILocation, INewLocation } from './location-interface';
 
 const mySQLService = new MySQLService();
 
 export class LocationSQL {
     
-    addLocation(name: string, googleLink: string): Promise<ILocation> {
+    addLocation(newLocation: INewLocation): Promise<ILocation> {
         return mySQLService.queryToPromise<ILocation>(
             `INSERT INTO locations(name, googleMapsLink) VALUES
                 (
-                    "${name}",
-                    "${googleLink}"
+                    "${newLocation.name}",
+                    "${newLocation.googleMapsLink}"
                 );`
         );
     }
@@ -18,6 +18,16 @@ export class LocationSQL {
     removeLocation(locationId: string): Promise<void> {
         return mySQLService.queryToPromise<void>(
             `DELETE FROM locations
+                WHERE ID = ${locationId};`
+        );
+    }
+
+    editLocation(locationId: string, locationUpdate: ILocation): Promise<ILocation> {
+        return mySQLService.queryToPromise<ILocation>(
+            `UPDATE locations
+                SET
+                    name = "${locationUpdate.name}",
+                    googleMapsLink = "${locationUpdate.googleMapsLink}"
                 WHERE ID = ${locationId};`
         );
     }

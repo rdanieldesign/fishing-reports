@@ -12,6 +12,7 @@ export class ReportPrompt extends PromptService {
             choices: [
                 { title: 'View all reports', value: ReportActions.ViewAllReports },
                 { title: 'Add new report', value: ReportActions.AddReport },
+                { title: '< Back', value: null },
             ],
         });
     }

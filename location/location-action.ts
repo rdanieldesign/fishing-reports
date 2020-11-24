@@ -1,5 +1,6 @@
 import { Choice } from "prompts";
 import { LocationActions } from "./location-enum";
+import { ILocation, INewLocation } from "./location-interface";
 import { LocationPrompts } from './location-prompt';
 import { LocationSQL } from './location-sql';
 import { locationsToPromptOptions } from './location-util';
@@ -23,6 +24,11 @@ export class LocationAction {
                         console.log(results);
                         break;
                     }
+                    case LocationActions.EditLocation: {
+                        const results = await this.editLocation();
+                        console.log(results);
+                        break;
+                    }
                     default:
                         break;
                 }
@@ -30,9 +36,19 @@ export class LocationAction {
     }
     
     async addLocation() {
-        const locationAnswers = await locationPrompt.createLocation();
-        console.log(locationSQL);
-        return locationSQL.addLocation(locationAnswers.name, locationAnswers.googleLink)
+        const newLocation = await locationPrompt.createLocation() as INewLocation;
+        return locationSQL.addLocation(newLocation)
+    }
+
+    async editLocation() {
+        const locationOptions = await locationSQL.getLocations();
+        const { locationId } = await locationPrompt.selectLocation(locationsToPromptOptions(locationOptions));
+        const location = locationOptions.find((loc: ILocation) => loc.id === locationId);
+        if (location) {
+            const locationUpdate = await locationPrompt.createLocation(location) as ILocation;
+            console.log(locationUpdate);
+            return locationSQL.editLocation(locationId, locationUpdate);
+        }
     }
     
     async removeLocation() {
