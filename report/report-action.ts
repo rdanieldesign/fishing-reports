@@ -36,9 +36,18 @@ export class ReportAction {
         return reportSQL.addReport(newReport as INewReport);
     }
     
-    viewAllReports() {
-        console.log(reportSQL);
-        console.log(reportSQL.viewAllReports);
-        return reportSQL.viewAllReports();
+    async viewAllReports() {
+        const locationOptions = await locationAction.getLocationOptions();
+        const reports = await reportSQL.viewAllReports();
+        return reports
+            .map((report) => {
+                return {
+                    date: report.date,
+                    location: locationOptions
+                        .find(location => location.value === report.locationId)?.title,
+                    catchCount: report.catchCount,
+                }
+            })
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     }
 }
