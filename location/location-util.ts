@@ -9,3 +9,7 @@ export function locationsToPromptOptions(locations: ILocation[]): Choice[] {
         };
     });
 }
+
+export function getLocationById(locationId: number, locations: ILocation[]): ILocation | undefined {
+    return locations.find(location => location.id === locationId);
+}

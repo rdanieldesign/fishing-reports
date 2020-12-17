@@ -3,6 +3,7 @@ import { LocationAction } from '../location/location-action';
 import { ReportSQL } from './report-sql';
 import { INewReport } from './report-interface';
 import { ReportActions } from './report-enum';
+import { reportsToPromptOptions } from './report-util';
 
 const reportSQL = new ReportSQL();
 const locationAction = new LocationAction();
@@ -22,6 +23,10 @@ export class ReportAction {
                     case ReportActions.AddReport: {
                         const results = await this.addReport();
                         console.log(results);
+                        break;
+                    }
+                    case ReportActions.DeleteReport: {
+                        await this.deleteReport();
                         break;
                     }
                     default:
@@ -49,5 +54,13 @@ export class ReportAction {
                 }
             })
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    }
+
+    async deleteReport() {
+        const locations = await locationAction.getLocations();
+        const reports = await reportSQL.viewAllReports();
+        const reportOptions = reportsToPromptOptions(reports, locations);
+        const reportToDelete = await reportPrompt.deleteReport(reportOptions);
+        return reportSQL.deleteReport(reportToDelete.reportId);
     }
 }

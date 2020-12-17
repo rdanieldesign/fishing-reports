@@ -61,4 +61,8 @@ export class LocationAction {
         const locations = await locationSQL.getLocations();
         return locationsToPromptOptions(locations)
     }
+
+    async getLocations(): Promise<ILocation[]> {
+        return locationSQL.getLocations();
+    }
 }

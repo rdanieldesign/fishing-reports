@@ -12,6 +12,7 @@ export class ReportPrompt extends PromptService {
             choices: [
                 { title: 'View all reports', value: ReportActions.ViewAllReports },
                 { title: 'Add new report', value: ReportActions.AddReport },
+                { title: 'Delete report', value: ReportActions.DeleteReport },
                 { title: '< Back', value: null },
             ],
         });
@@ -37,5 +38,14 @@ export class ReportPrompt extends PromptService {
                 message: 'How many fish did you catch?'
             },
         ]);
+    }
+
+    deleteReport(reportOptions: Choice[]) {
+        return this.sendPrompt({
+            type: 'select',
+            name: 'reportId',
+            message: 'Which report do you want to delete?',
+            choices: reportOptions,
+        });
     }
 }

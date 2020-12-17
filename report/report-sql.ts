@@ -19,4 +19,11 @@ export class ReportSQL {
                 );`
         );
     }
+
+    deleteReport(reportId: number) {
+        return mySQLService.queryToPromise<void>(
+            `DELETE FROM reports
+                WHERE ID = ${reportId};`
+        );
+    }
 }
