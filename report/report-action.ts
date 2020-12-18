@@ -28,6 +28,10 @@ export class ReportAction {
                         results = await this.addReport();
                         break;
                     }
+                    case ReportActions.EditReport: {
+                        results = await this.editReport();
+                        break;
+                    }
                     case ReportActions.DeleteReport: {
                         await this.deleteReport();
                         break;
@@ -43,6 +47,15 @@ export class ReportAction {
         const locationOptions = await locationAction.getLocationOptions();
         const newReport = await reportPrompt.createReport(locationOptions);
         return reportSQL.addReport(newReport as INewReport);
+    }
+
+    async editReport() {
+        const reportToEdit = await this.selectReport();
+        if (!reportToEdit) return;
+        const locationOptions = await locationAction.getLocationOptions();
+        console.log(locationOptions);
+        const newReport = await reportPrompt.createReport(locationOptions, reportToEdit);
+        return reportSQL.updateReport(reportToEdit?.id, newReport as INewReport);
     }
     
     async viewAllReports() {
@@ -62,7 +75,6 @@ export class ReportAction {
     }
 
     async getReportByLocation() {
-        console.log('ehe')
         const location = await locationAction.selectLocation();
         if (!location) return;
         let reports = await reportSQL.getReportsByLocation(location.id);
@@ -70,10 +82,16 @@ export class ReportAction {
     }
 
     async deleteReport() {
+        const reportToDelete = await this.selectReport('Which report do you want to delete?');
+        if (!reportToDelete) return;
+        return reportSQL.deleteReport(reportToDelete?.id);
+    }
+
+    private async selectReport(message: string = '') {
         const locations = await locationAction.getLocations();
         const reports = await reportSQL.getAllReports();
         const reportOptions = reportsToPromptOptions(reports, locations);
-        const reportToDelete = await reportPrompt.deleteReport(reportOptions);
-        return reportSQL.deleteReport(reportToDelete.reportId);
+        const { reportId } = await reportPrompt.getReport(reportOptions, message);
+        return reports.find((report) => report.id === reportId);
     }
 }

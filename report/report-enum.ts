@@ -3,4 +3,5 @@ export enum ReportActions {
   AddReport,
   DeleteReport,
   GetReportsByLocation,
+  EditReport,
 }

@@ -28,6 +28,19 @@ export class ReportSQL {
         );
     }
 
+    updateReport(reportId: number, newReport: INewReport) {
+        return mySQLService.queryToPromise<IReport>(
+            `UPDATE reports
+                SET
+                    locationId = ${newReport.locationId},
+                    date = STR_TO_DATE("${jsDateToString(newReport.date)}",'%Y-%m-%d'),
+                    catchCount = ${newReport.catchCount},
+                    notes = "${newReport.notes}"
+
+                WHERE ID = ${reportId};`
+        );
+    }
+
     deleteReport(reportId: number) {
         return mySQLService.queryToPromise<void>(
             `DELETE FROM reports
