@@ -55,6 +55,7 @@ export class ReportAction {
                     location: locationOptions
                         .find(location => location.value === report.locationId)?.title,
                     catchCount: report.catchCount,
+                    notes: report.notes,
                 }
             })
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());

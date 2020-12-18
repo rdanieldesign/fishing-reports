@@ -38,6 +38,11 @@ export class ReportPrompt extends PromptService {
                 name: 'catchCount',
                 message: 'How many fish did you catch?'
             },
+            {
+                type: 'text',
+                name: 'notes',
+                message: 'Add notes for the report.'
+            },
         ]);
     }
 

@@ -18,11 +18,12 @@ export class ReportSQL {
 
     addReport(newReport: INewReport) {
         return mySQLService.queryToPromise<IReport>(
-            `INSERT INTO reports(locationId, date, catchCount) VALUES
+            `INSERT INTO reports(locationId, date, catchCount, notes) VALUES
                 (
                     ${newReport.locationId},
                     STR_TO_DATE("${jsDateToString(newReport.date)}",'%Y-%m-%d'),
-                    ${newReport.catchCount}
+                    ${newReport.catchCount},
+                    "${newReport.notes}"
                 );`
         );
     }
