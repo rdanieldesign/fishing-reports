@@ -35,21 +35,12 @@ export class LocationPrompts extends PromptService {
             },
         ]);
     }
-    
-    removeLocation(locationOptions: Choice[]) {
-        return this.sendPrompt({
-                type: 'select',
-                name: 'locationId',
-                message: 'Which location do you want to remove?',
-                choices: locationOptions,
-            });
-    }
 
-    selectLocation(locationOptions: Choice[]) {
+    selectLocation(locationOptions: Choice[], message: string = 'Select a location') {
         return this.sendPrompt({
             type: 'select',
             name: 'locationId',
-            message: 'Select a location',
+            message,
             choices: locationOptions,
         });
     }

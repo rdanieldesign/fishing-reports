@@ -5,8 +5,15 @@ const mySQLService = new MySQLService();
 
 export class ReportSQL {
 
-    viewAllReports(): Promise<IReport[]> {
+    getAllReports(): Promise<IReport[]> {
         return mySQLService.queryToPromise<IReport[]>('SELECT * FROM reports');
+    }
+
+    getReportsByLocation(locationId: number): Promise<IReport[]> {
+        return mySQLService.queryToPromise<IReport[]>(`
+            SELECT * FROM reports
+                WHERE locationId = ${locationId};
+        `);
     }
 
     addReport(newReport: INewReport) {

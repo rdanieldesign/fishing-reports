@@ -41,28 +41,35 @@ export class LocationAction {
     }
 
     async editLocation() {
-        const locationOptions = await locationSQL.getLocations();
-        const { locationId } = await locationPrompt.selectLocation(locationsToPromptOptions(locationOptions));
-        const location = locationOptions.find((loc: ILocation) => loc.id === locationId);
+        const location = await this.selectLocation();
         if (location) {
             const locationUpdate = await locationPrompt.createLocation(location) as ILocation;
             console.log(locationUpdate);
-            return locationSQL.editLocation(locationId, locationUpdate);
+            return locationSQL.editLocation(location.id, locationUpdate);
         }
     }
     
     async removeLocation() {
-        const locations = await locationSQL.getLocations();
-        const { locationId } = await locationPrompt.removeLocation(locationsToPromptOptions(locations));
+        const locations = await this.getLocations();
+        const { locationId } = await locationPrompt.selectLocation(
+            locationsToPromptOptions(locations),
+            'Which location do you want to remove?'
+        );
         return locationSQL.removeLocation(locationId)
     }
     
     async getLocationOptions(): Promise<Choice[]> {
-        const locations = await locationSQL.getLocations();
+        const locations = await this.getLocations();
         return locationsToPromptOptions(locations)
     }
 
     async getLocations(): Promise<ILocation[]> {
         return locationSQL.getLocations();
     }
+
+    async selectLocation(): Promise<ILocation | undefined> {
+        const locations = await this.getLocations();
+        const { locationId } = await locationPrompt.selectLocation(locationsToPromptOptions(locations));
+        return locations.find((loc: ILocation) => loc.id === locationId);
+    } 
 }

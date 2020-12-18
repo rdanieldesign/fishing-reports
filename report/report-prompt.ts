@@ -11,6 +11,7 @@ export class ReportPrompt extends PromptService {
             message: '(Reports) => What do you want to do?',
             choices: [
                 { title: 'View all reports', value: ReportActions.ViewAllReports },
+                { title: 'View reports by location', value: ReportActions.GetReportsByLocation },
                 { title: 'Add new report', value: ReportActions.AddReport },
                 { title: 'Delete report', value: ReportActions.DeleteReport },
                 { title: '< Back', value: null },

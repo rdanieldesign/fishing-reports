@@ -3,7 +3,7 @@ import { LocationAction } from '../location/location-action';
 import { ReportSQL } from './report-sql';
 import { INewReport } from './report-interface';
 import { ReportActions } from './report-enum';
-import { reportsToPromptOptions } from './report-util';
+import { reportsToPromptOptions, sortReportsByDate } from './report-util';
 
 const reportSQL = new ReportSQL();
 const locationAction = new LocationAction();
@@ -14,15 +14,18 @@ export class ReportAction {
     async getActions() {
         return reportPrompt.getActions()
             .then(async ({ action }) => {
+                let results = null;
                 switch (action) {
                     case ReportActions.ViewAllReports: {
-                        const results = await this.viewAllReports();
-                        console.log(results);
+                        results = await this.viewAllReports();
+                        break;
+                    }
+                    case ReportActions.GetReportsByLocation: {
+                        results = await this.getReportByLocation();
                         break;
                     }
                     case ReportActions.AddReport: {
-                        const results = await this.addReport();
-                        console.log(results);
+                        results = await this.addReport();
                         break;
                     }
                     case ReportActions.DeleteReport: {
@@ -32,6 +35,7 @@ export class ReportAction {
                     default:
                         break;
                 }
+                console.log(results);
             });
     }
 
@@ -43,7 +47,7 @@ export class ReportAction {
     
     async viewAllReports() {
         const locationOptions = await locationAction.getLocationOptions();
-        const reports = await reportSQL.viewAllReports();
+        const reports = await reportSQL.getAllReports();
         return reports
             .map((report) => {
                 return {
@@ -56,9 +60,17 @@ export class ReportAction {
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     }
 
+    async getReportByLocation() {
+        console.log('ehe')
+        const location = await locationAction.selectLocation();
+        if (!location) return;
+        let reports = await reportSQL.getReportsByLocation(location.id);
+        return sortReportsByDate(reports);
+    }
+
     async deleteReport() {
         const locations = await locationAction.getLocations();
-        const reports = await reportSQL.viewAllReports();
+        const reports = await reportSQL.getAllReports();
         const reportOptions = reportsToPromptOptions(reports, locations);
         const reportToDelete = await reportPrompt.deleteReport(reportOptions);
         return reportSQL.deleteReport(reportToDelete.reportId);

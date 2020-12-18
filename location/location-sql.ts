@@ -15,14 +15,14 @@ export class LocationSQL {
         );
     }
 
-    removeLocation(locationId: string): Promise<void> {
+    removeLocation(locationId: number): Promise<void> {
         return mySQLService.queryToPromise<void>(
             `DELETE FROM locations
                 WHERE ID = ${locationId};`
         );
     }
 
-    editLocation(locationId: string, locationUpdate: ILocation): Promise<ILocation> {
+    editLocation(locationId: number, locationUpdate: ILocation): Promise<ILocation> {
         return mySQLService.queryToPromise<ILocation>(
             `UPDATE locations
                 SET
