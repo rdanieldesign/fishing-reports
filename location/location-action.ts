@@ -13,25 +13,24 @@ export class LocationAction {
     async getActions() {
         return locationPrompt.getActions()
             .then(async ({ action }) => {
+                let results = null;
                 switch (action) {
                     case LocationActions.AddLocation: {
-                        const results = await this.addLocation();
-                        console.log(results);
+                        results = await this.addLocation();
                         break;
                     }
                     case LocationActions.RemoveLocation: {
-                        const results = await this.removeLocation();
-                        console.log(results);
+                        results = await this.removeLocation();
                         break;
                     }
                     case LocationActions.EditLocation: {
-                        const results = await this.editLocation();
-                        console.log(results);
+                        results = await this.editLocation();
                         break;
                     }
                     default:
                         break;
                 }
+                console.log(results);
             });
     }
     
@@ -44,7 +43,6 @@ export class LocationAction {
         const location = await this.selectLocation();
         if (location) {
             const locationUpdate = await locationPrompt.createLocation(location) as ILocation;
-            console.log(locationUpdate);
             return locationSQL.editLocation(location.id, locationUpdate);
         }
     }

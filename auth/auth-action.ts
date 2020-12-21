@@ -1,8 +1,7 @@
-import { AuthPrompt } from './auth-prompt';
+import { Connection } from 'mysql';
 import { MySQLService } from '../mysql-service';
-import { MYSQL_PASSWORD } from '../credentials';
 const mySQLService = new MySQLService();
 
-export async function login(): Promise<void> {
-  mySQLService.login(MYSQL_PASSWORD);
+export async function login(): Promise<Connection> {
+  return mySQLService.login();
 };

@@ -22,7 +22,6 @@ export class ReportPrompt extends PromptService {
     }
 
     createReport(locationOptions: Choice[], report?: IReport) {
-        console.log(report);
         return this.sendPrompt([
             {
                 type: 'select',

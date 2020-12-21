@@ -53,7 +53,6 @@ export class ReportAction {
         const reportToEdit = await this.selectReport();
         if (!reportToEdit) return;
         const locationOptions = await locationAction.getLocationOptions();
-        console.log(locationOptions);
         const newReport = await reportPrompt.createReport(locationOptions, reportToEdit);
         return reportSQL.updateReport(reportToEdit?.id, newReport as INewReport);
     }

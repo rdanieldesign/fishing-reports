@@ -1,4 +1,6 @@
 import { Connection, createConnection, MysqlError } from 'mysql';
+import { Client } from 'ssh2';
+import { DB_CONFIG, PRIVATE_KEY_PATH, SSH_CONFIG } from './credentials';
 
 export class MySQLService {
 
@@ -12,14 +14,40 @@ export class MySQLService {
         return MySQLService._instance;
     }
 
-    login(password: string) {
-        this.mySQLConnection = createConnection({
-            host: 'localhost',
-            user: 'root',
-            password,
-            database: 'fishing_reports'
+    async login(): Promise<Connection> {
+        const sshClient = new Client();
+        const tunnelConfig = {
+            ...SSH_CONFIG,
+            privateKey: require('fs').readFileSync(PRIVATE_KEY_PATH),
+        };
+        const forwardConfig = {
+            srcHost: '127.0.0.1',
+            srcPort: 3306,
+        };
+        this.mySQLConnection = await new Promise((resolve, reject) => {
+            sshClient.on('ready', () => {
+                sshClient.forwardOut(
+                    forwardConfig.srcHost,
+                    forwardConfig.srcPort,
+                    DB_CONFIG.host,
+                    DB_CONFIG.port,
+                    (err, stream) => {
+                        if (err) reject(err);
+                        const updatedDbServer = {
+                            ...DB_CONFIG,
+                            stream
+                        };
+                        const connection = createConnection(updatedDbServer);
+                        connection.connect((error) => {
+                            if (error) {
+                                reject(error);
+                            }
+                            resolve(connection);
+                        });
+                    });
+            }).connect(tunnelConfig);
         });
-        this.mySQLConnection.connect();
+        return this.mySQLConnection;
     }
 
     endConnection() {
@@ -38,4 +66,5 @@ export class MySQLService {
             });
         });
     }
+
 }
