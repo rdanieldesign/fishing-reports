@@ -9,7 +9,7 @@ export class MenuAction extends PromptService {
       name: 'selection',
       message: 'What do you want to do?',
       choices: [
-        { title: 'Manage locations', value: MenuItems.locations },
+        { title: 'Manage Locations', value: MenuItems.locations },
         { title: 'Manage Reports', value: MenuItems.reports },
       ],
     });

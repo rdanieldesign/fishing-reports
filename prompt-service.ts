@@ -1,7 +1,5 @@
 import * as prompts from 'prompts';
 import { PromptObject } from 'prompts';
-import { MySQLService } from './mysql-service';
-const mySQLService = new MySQLService();
 
 export class PromptService {
 
@@ -11,7 +9,6 @@ export class PromptService {
 
     private onCancel(): boolean {
         console.log('on cancel');
-        mySQLService.endConnection();
         return false;
     }
 }

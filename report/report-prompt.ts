@@ -36,7 +36,7 @@ export class ReportPrompt extends PromptService {
                 type: 'date',
                 name: 'date',
                 message: 'When did you go?',
-                initial: report ? report.date : new Date(),
+                initial: report ? new Date(report.date) : new Date(),
             },
             {
                 type: 'number',

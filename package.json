@@ -10,9 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/axios": "^0.14.0",
     "@types/mysql": "^2.15.15",
     "@types/prompts": "^2.0.9",
     "@types/ssh2": "^0.5.46",
+    "axios": "^0.21.1",
     "eslint": "^7.13.0",
     "jslint": "^0.12.1",
     "mysql": "^2.18.1",

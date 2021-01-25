@@ -1,12 +1,12 @@
 import { Choice } from "prompts";
+import { LocationAPI } from './location-api';
 import { LocationActions } from "./location-enum";
 import { ILocation, INewLocation } from "./location-interface";
 import { LocationPrompts } from './location-prompt';
-import { LocationSQL } from './location-sql';
 import { locationsToPromptOptions } from './location-util';
 
 const locationPrompt = new LocationPrompts();
-const locationSQL = new LocationSQL();
+const locationAPI = new LocationAPI();
 
 export class LocationAction {
 
@@ -36,14 +36,14 @@ export class LocationAction {
     
     async addLocation() {
         const newLocation = await locationPrompt.createLocation() as INewLocation;
-        return locationSQL.addLocation(newLocation)
+        return locationAPI.addLocation(newLocation)
     }
 
     async editLocation() {
         const location = await this.selectLocation();
         if (location) {
             const locationUpdate = await locationPrompt.createLocation(location) as ILocation;
-            return locationSQL.editLocation(location.id, locationUpdate);
+            return locationAPI.editLocation(location.id, locationUpdate);
         }
     }
     
@@ -53,7 +53,7 @@ export class LocationAction {
             locationsToPromptOptions(locations),
             'Which location do you want to remove?'
         );
-        return locationSQL.removeLocation(locationId)
+        return locationAPI.removeLocation(locationId)
     }
     
     async getLocationOptions(): Promise<Choice[]> {
@@ -62,7 +62,7 @@ export class LocationAction {
     }
 
     async getLocations(): Promise<ILocation[]> {
-        return locationSQL.getLocations();
+        return locationAPI.getLocations();
     }
 
     async selectLocation(): Promise<ILocation | undefined> {

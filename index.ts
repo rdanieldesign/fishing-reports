@@ -1,18 +1,16 @@
 import { LocationAction } from './location/location-action';
 import { ReportAction } from './report/report-action';
-import { login } from './auth/auth-action';
-import { MySQLService } from './mysql-service';
 import { MenuAction } from './menu/menu-action';
 import { MenuItems } from './menu/menu-enum';
+import axios from 'axios';
+import { API_ROOT } from './constants';
 
-const mySQLService = new MySQLService();
 const menuAction = new MenuAction();
 const locationAction = new LocationAction();
 const reportAction = new ReportAction();
 
 const exitHandler = () => {
     console.log('exit process');
-    mySQLService.endConnection();
     process.exit();
 };
 
@@ -36,9 +34,9 @@ async function getMenu() {
 }
 
 // Start process
-login().then(() => {
-    getMenu();
-});
+axios.defaults.baseURL = API_ROOT;
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+getMenu();
 
 //catches ctrl+c event
 process.on('SIGINT', exitHandler);

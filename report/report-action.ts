@@ -1,13 +1,13 @@
 import { ReportPrompt } from './report-prompt';
 import { LocationAction } from '../location/location-action';
-import { ReportSQL } from './report-sql';
 import { INewReport } from './report-interface';
 import { ReportActions } from './report-enum';
 import { reportsToPromptOptions, sortReportsByDate } from './report-util';
+import { ReportAPI } from './report-api';
 
-const reportSQL = new ReportSQL();
 const locationAction = new LocationAction();
 const reportPrompt = new ReportPrompt();
+const reportAPI = new ReportAPI();
 
 export class ReportAction {
 
@@ -46,7 +46,7 @@ export class ReportAction {
     async addReport() {
         const locationOptions = await locationAction.getLocationOptions();
         const newReport = await reportPrompt.createReport(locationOptions);
-        return reportSQL.addReport(newReport as INewReport);
+        return reportAPI.addReport(newReport as INewReport);
     }
 
     async editReport() {
@@ -54,12 +54,12 @@ export class ReportAction {
         if (!reportToEdit) return;
         const locationOptions = await locationAction.getLocationOptions();
         const newReport = await reportPrompt.createReport(locationOptions, reportToEdit);
-        return reportSQL.updateReport(reportToEdit?.id, newReport as INewReport);
+        return reportAPI.updateReport(reportToEdit?.id, newReport as INewReport);
     }
     
     async viewAllReports() {
         const locationOptions = await locationAction.getLocationOptions();
-        const reports = await reportSQL.getAllReports();
+        const reports = await reportAPI.getAllReports();
         return reports
             .map((report) => {
                 return {
@@ -76,19 +76,19 @@ export class ReportAction {
     async getReportByLocation() {
         const location = await locationAction.selectLocation();
         if (!location) return;
-        let reports = await reportSQL.getReportsByLocation(location.id);
+        let reports = await reportAPI.getReportsByLocation(location.id);
         return sortReportsByDate(reports);
     }
 
     async deleteReport() {
         const reportToDelete = await this.selectReport('Which report do you want to delete?');
         if (!reportToDelete) return;
-        return reportSQL.deleteReport(reportToDelete?.id);
+        return reportAPI.deleteReport(reportToDelete?.id);
     }
 
     private async selectReport(message: string = '') {
         const locations = await locationAction.getLocations();
-        const reports = await reportSQL.getAllReports();
+        const reports = await reportAPI.getAllReports();
         const reportOptions = reportsToPromptOptions(reports, locations);
         const { reportId } = await reportPrompt.getReport(reportOptions, message);
         return reports.find((report) => report.id === reportId);
